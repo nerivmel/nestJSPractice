@@ -1,0 +1,31 @@
+version: '3.7'
+
+#objeto en yml que indica otras propiedades
+services:
+  #nombre del servicio/contenedor "db:"
+  db:
+    image: postgres:13-alpine   #buscamos la imagen en el dockerhub
+    container_name: database 
+    restart: always              #nos ayuda por si el contenedor se cae docker intenta cargarlo automaticamnete
+    environment:                #variables de entorno
+      POSRGRES_DB: postgres
+      POSRGRES_USER: admin
+      POSRGRES_PASSWORD: my-weak-password
+    volumes:                    #forma en que docker persite la data
+      - /var/lib/postgresql/data
+    ports:                      #froma de mapear los puertos de nuetro host con los de nuestro contenedor
+      - 5432:5432
+  pgadmin:
+    image: dpage/pgadmin4   #buscamos la imagen en el dockerhub
+    container_name: pgAdmin 
+    restart: always              #nos ayuda por si el contenedor se cae docker intenta cargarlo automaticamnete
+    environment:                #variables de entorno
+      PGADMIN_DEFAULT_EMAIL: admin@nestjs.com
+      PGADMIN_DEFAULT_PASSWORD: my-weak-password
+      PGADMIN_LISTEN_PORT: 80
+    ports:                      #froma de mapear los puertos de nuetro host con los de nuestro contenedor
+      - 8080:80
+    volumes:
+      - /var/lib/pgadmin
+    depends_on:
+      - db

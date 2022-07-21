@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateTuitDto, UpdateTuitDto } from './dto';
 import { Tuit } from './tuitentity';
 
 @Injectable()
 export class TuitsService {
     private tuits: Tuit[] = [
         {
-            id:'1',
+            id:'2',
             message:'Hello world from nestJs',
             
         },
@@ -16,16 +17,22 @@ export class TuitsService {
     }
 
     getTuit(id: string): Tuit{
-        return this.tuits.find((item) => item.id === id);
+        const tuit = this.tuits.find((item) => item.id === id);
+        //controlamos que el tuit exista
+        if (!tuit){
+            throw new NotFoundException("no esta el tuit")
+        }
+
+        return tuit; 
     }
 
-    createTuit(message: string){
+    createTuit({message}: CreateTuitDto){
         this.tuits.push({
             id: (Math.floor(Math.random() * 2000) + 1).toString(),message,
         });
     }
 
-    updateTuit(id: string, message: any){
+    updateTuit(id: string, {message}: UpdateTuitDto){
         const tuit: Tuit = this.getTuit(id);
         tuit.message = message;
         return tuit;
